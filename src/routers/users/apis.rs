@@ -5,7 +5,11 @@ use serde_json::{ Value, json };
 /* Users Group Module */ 
 pub mod users {
     use super::*;
-    use crate::routers::users::models::users::GetResponse;
+    use crate::models::users::users::{
+        GetRequest, GetResponse
+    };
+    use crate::services::users::users::test_loop_vecs;
+
 
     pub fn router() -> Router {
         Router::new()
@@ -14,20 +18,20 @@ pub mod users {
     }
 
     async fn get_user() -> Json<Value> {
-        let mut my_vec: Vec<u32> = Vec::new();
-        for v in 0..=10 {
-            my_vec.push(v);
-        }
-        println!("{:?}", my_vec);
+        test_loop_vecs();
 
         let res = GetResponse {
             detail: "detail".to_string()
         };
         Json(json!(res))
     }
-    
-    async fn post_user() -> Json<Value> {
-        Json(json!({ "detail": "post" }))
+
+    async fn post_user(Json(payload): Json<GetRequest>) -> Json<Value> {
+        println!("{:?}", payload.name);
+
+        Json(json!(GetResponse{
+            detail: payload.name
+        }))
     }
 }
 
@@ -35,6 +39,7 @@ pub mod users {
 /* Register Module */ 
 pub mod register {
     use super::*;
+
 
     pub fn router() -> Router {
         Router::new()

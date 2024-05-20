@@ -1,7 +1,4 @@
 mod apis;
-mod crud;
-mod models;
-mod queries;
 
 use apis::{
     users, register
