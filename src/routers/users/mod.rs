@@ -1,3 +1,18 @@
-pub mod apis;
-pub mod models;
-pub mod crud;
+mod apis;
+mod crud;
+mod models;
+mod queries;
+
+use apis::{
+    users, register
+};
+
+use axum::Router;
+
+
+/* Main Router: Users */ 
+pub fn router() -> Router {
+    Router::new()
+        .nest("/tests", users::router())  
+        .nest("/register", register::router())      
+}

@@ -2,16 +2,8 @@ use axum::{ routing::{ get, post }, Router, Json };
 use serde_json::{ Value, json };
 
 
-/* Main Router: Users */ 
-pub fn router() -> Router {
-    Router::new()
-        .nest("/tests", users::router())  
-        .nest("/register", register::router())      
-}
-
-
 /* Users Group Module */ 
-mod users {
+pub mod users {
     use super::*;
     use crate::routers::users::models::users::GetResponse;
 
@@ -22,6 +14,12 @@ mod users {
     }
 
     async fn get_user() -> Json<Value> {
+        let mut my_vec: Vec<u32> = Vec::new();
+        for v in 0..=10 {
+            my_vec.push(v);
+        }
+        println!("{:?}", my_vec);
+
         let res = GetResponse {
             detail: "detail".to_string()
         };
@@ -35,7 +33,7 @@ mod users {
 
 
 /* Register Module */ 
-mod register {
+pub mod register {
     use super::*;
 
     pub fn router() -> Router {

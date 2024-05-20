@@ -1,1 +1,1 @@
-mod index;
+mod settings;
