@@ -1,5 +1,4 @@
 mod apis;
-
 use apis::{
     users, register
 };

@@ -10,8 +10,9 @@ mod routers;
 mod services;
 mod utils;
 
-use routers::users;
 use routers::fallback::apis::not_found_api as not_found;
+use routers::users::router as users_router;
+use routers::web::router as web_router;
 
 use axum::Router;
 use std::net::SocketAddr;
@@ -20,11 +21,11 @@ use tracing::Level;
 use tower_http::trace::{ self, TraceLayer };
 
 
-const PORT: u16 = 9000;
 fn routers_index() -> Router {
     Router::new()
         .fallback(not_found())
-        .nest("/users", users::router())
+        .nest("/users", users_router())
+        .nest("/web", web_router())
 }
  
  
@@ -51,10 +52,11 @@ async fn main() {
         ); /* Tracing */
 
     tracing_subscriber::fmt().with_target(false).compact().init();
-    tracing::info!("🚀🌟 listening on port => {:?} 🚀🌟", PORT);
+    tracing::info!("🚀🌟 listening on port => {:?} 🚀🌟", configs::settings::PORT);
 
-    let listener = TcpListener::bind(SocketAddr::from(([0, 0, 0, 0], PORT)))
-        .await
+    let listener = TcpListener::bind(
+            SocketAddr::from(([0, 0, 0, 0], configs::settings::PORT))
+        ).await
         .unwrap();
 
     axum::serve(listener, apis.into_make_service())
