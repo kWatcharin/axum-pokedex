@@ -20,15 +20,7 @@ pub mod navbar {
     }
 
     #[derive(Serialize, Deserialize, Debug)]
-    pub struct Dog {
+    pub struct CreatePayload {
         pub name: String,
-        pub year_born: i32,
-        pub owner: DogOwner
-    }
-
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct DogOwner {
-        pub first_name: String,
-        pub last_name: String
     }
 } 
