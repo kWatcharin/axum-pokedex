@@ -1,3 +1,4 @@
+pub mod auth;
 pub mod items;
 pub mod moves;
 pub mod root;
