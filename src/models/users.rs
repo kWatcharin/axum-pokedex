@@ -1,10 +1,11 @@
 use serde::{ Serialize, Deserialize };
+use validator::Validate;
 
 
 pub mod users {
     use super::*;
 
-    #[derive(Deserialize, Debug)]
+    #[derive(Deserialize, Validate, Debug)]
     pub struct GetRequest {
         pub name: String
     }

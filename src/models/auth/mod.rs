@@ -1,6 +1,4 @@
-use serde::{
-    Serialize, Deserialize
-};
+use serde::{ Serialize, Deserialize };
 
 
 pub mod login {

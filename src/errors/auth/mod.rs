@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 
 #[derive(ThisError, Debug)]
-pub enum AuthError {
+pub enum Error {
     #[allow(unused)]
     #[error("Failed to login")]
     LoginFailed,
@@ -30,7 +30,7 @@ pub enum AuthError {
     NotFoundData
 }
 
-pub type Result<T> = core::result::Result<T, AuthError>;
+pub type Result<T, E = Error> = axum::response::Result<T, E>;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct AuthErrorMessage {
@@ -42,39 +42,51 @@ struct AuthErrorResponse {
     detail: AuthErrorMessage
 }
 
-impl IntoResponse for AuthError {
+impl IntoResponse for Error {
     fn into_response(self) -> Response {
         let auth_error_message;
 
         let error_response =  match self {
-            AuthError::LoginFailed => {
+            Error::LoginFailed => {
                 auth_error_message = AuthErrorMessage { message: "unauthorized".to_string() };
-                (StatusCode::UNAUTHORIZED, Json(AuthErrorResponse { detail: auth_error_message }))
+                (
+                    StatusCode::UNAUTHORIZED, Json(AuthErrorResponse { detail: auth_error_message })
+                )
             },
 
-            AuthError::DatabaseQueryError => {
+            Error::DatabaseQueryError => {
                 auth_error_message = AuthErrorMessage { message: "database query error".to_string() };
-                (StatusCode::INTERNAL_SERVER_ERROR, Json(AuthErrorResponse { detail: auth_error_message }))
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR, Json(AuthErrorResponse { detail: auth_error_message })
+                )
             },
 
-            AuthError::InvalidUsername => {
+            Error::InvalidUsername => {
                 auth_error_message = AuthErrorMessage { message: "invalid username".to_string() };
-                (StatusCode::BAD_REQUEST, Json(AuthErrorResponse { detail: auth_error_message }))
+                (
+                    StatusCode::BAD_REQUEST, Json(AuthErrorResponse { detail: auth_error_message })
+                )
             },
 
-            AuthError::InvalidPassword => {
+            Error::InvalidPassword => {
                 auth_error_message = AuthErrorMessage { message: "invalid password".to_string() };
-                (StatusCode::BAD_REQUEST, Json(AuthErrorResponse { detail: auth_error_message }))
+                (
+                    StatusCode::BAD_REQUEST, Json(AuthErrorResponse { detail: auth_error_message })
+                )
             },
 
-            AuthError::InvalidDataFormat => {
+            Error::InvalidDataFormat => {
                 auth_error_message = AuthErrorMessage { message: "invalid data format".to_string() };
-                (StatusCode::BAD_REQUEST, Json(AuthErrorResponse { detail: auth_error_message }))
+                (
+                    StatusCode::BAD_REQUEST, Json(AuthErrorResponse { detail: auth_error_message })
+                )
             }
 
-            AuthError::NotFoundData => {
+            Error::NotFoundData => {
                 auth_error_message = AuthErrorMessage { message: "not found data".to_string() };
-                (StatusCode::NOT_FOUND, Json(AuthErrorResponse { detail: auth_error_message }))
+                (
+                    StatusCode::NOT_FOUND, Json(AuthErrorResponse { detail: auth_error_message })
+                )
             }
         };
 

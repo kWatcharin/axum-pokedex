@@ -1,16 +1,14 @@
 mod configs; 
 mod db;
 mod errors;
-mod handlers;
 mod middlewares;
 mod models;
-mod modules;
 mod resources;
 mod routers;
 mod services;
 mod utils;
 
-use routers::fallback::apis::not_found_api as not_found;
+use routers::fallback::not_found_api;
 use routers::{
     root, users, web 
 };
@@ -27,7 +25,7 @@ fn routers_index() -> Router {
         .nest("/", root::router())
         .nest("/users", users::router())
         .nest("/web", web::router())
-        .fallback(not_found())
+        .fallback(not_found_api())
 }
  
  
@@ -35,7 +33,7 @@ fn routers_index() -> Router {
 async fn main() {
     let apis = routers_index()
         .layer(
-            middlewares::cors::cors_layor()
+            middlewares::cors_layor()
         )
         .layer(
             TraceLayer::new_for_http()
@@ -54,10 +52,10 @@ async fn main() {
         );
 
     tracing_subscriber::fmt().with_target(false).compact().init();
-    tracing::info!("🚀🌟 listening on port => {:?} 🚀🌟", configs::settings::PORT);
+    tracing::info!("🚀🌟 listening on port => {:?} 🚀🌟", configs::PORT);
 
     let listener = TcpListener::bind(
-            SocketAddr::from(([0, 0, 0, 0], configs::settings::PORT))
+            SocketAddr::from(([0, 0, 0, 0], configs::PORT))
         ).await
         .unwrap();
 

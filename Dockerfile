@@ -8,7 +8,7 @@ WORKDIR /api
 COPY ./ ./
 
 RUN apt-get update
-RUN apt install pkg-config
+RUN apt-get install pkg-config
 RUN apt-get install libudev-dev
 RUN apt-get install -y musl-tools
 

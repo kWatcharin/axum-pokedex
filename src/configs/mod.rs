@@ -1,1 +1,1 @@
-pub mod settings;
+pub const PORT: u16 = 9000;
