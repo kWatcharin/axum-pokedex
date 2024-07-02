@@ -13,7 +13,7 @@ pub fn router() -> Router {
 
 mod login {
     use super::*;
-    use crate::models::auth::login::{ LoginPayload, LoginResponse };
+    use crate::models::auth::login::LoginPayload;
     use crate::services::auth::login::check as check_login;
 
 
@@ -26,13 +26,15 @@ mod login {
     }
 
 
-    async fn check(Json(payload): Json<LoginPayload>) -> Result<(StatusCode, Json<LoginResponse>)> {
+    async fn check(Json(payload): Json<LoginPayload>) -> Result<impl IntoResponse> {
         check_login(payload)
     }
 
     async fn test_res(Json(payload): Json<LoginPayload>) -> Result<impl IntoResponse> {
         if payload.username == "" && payload.pwd == "" {
-            Err(Error::LoginFailed)
+            Err(
+                Error::LoginFailed
+            )
         } else {
             Ok(
                 (
@@ -52,7 +54,9 @@ mod login {
     }
 
     async fn test_err() -> Result<()> {
-        Err(Error::DatabaseQueryError)
+        Err(
+            Error::DatabaseQueryError
+        )
     }
 }
 

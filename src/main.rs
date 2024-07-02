@@ -10,10 +10,14 @@ mod utils;
 
 use routers::fallback::not_found_api;
 use routers::{
-    root, users, web 
+    auth, 
+    root, 
+    users, 
+    web 
 };
 
 use axum::Router;
+use tower_cookies::CookieManagerLayer;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing::Level;
@@ -23,6 +27,7 @@ use tower_http::trace::{ self, TraceLayer };
 fn routers_index() -> Router {
     Router::new()
         .nest("/", root::router())
+        .nest("/auth", auth::router())
         .nest("/users", users::router())
         .nest("/web", web::router())
         .fallback(not_found_api())
@@ -34,6 +39,9 @@ async fn main() {
     let apis = routers_index()
         .layer(
             middlewares::cors_layor()
+        )
+        .layer(
+            CookieManagerLayer::new()
         )
         .layer(
             TraceLayer::new_for_http()

@@ -1,5 +1,4 @@
-#![allow(unused)]
-use anyhow::Result;
+use anyhow::{Ok, Result};
 use serde_json::json;
 
 
@@ -21,9 +20,9 @@ async fn test_users_post() -> Result<()> {
     Ok(())
 }
 
+
 #[tokio::test]
 async fn test_fetch_navbar() -> Result<()> {
-    let hc = httpc_test::new_client("http://localhost:9000")?; 
     let payload = json!({
         "username": "username",
         "password": "password",
@@ -32,8 +31,25 @@ async fn test_fetch_navbar() -> Result<()> {
         "app_type": 1,
         "db": "db"
     });
-    let res = hc.do_post("/web/components/navbar", payload).await?;
-    res.print().await?;
+
+    httpc_test::new_client("http://localhost:9000")?
+        .do_post("/web/components/navbar", payload)
+        .await?
+        .print()
+        .await?;
     Ok(())
 }
 
+
+#[tokio::test]
+async fn fetch_pokeapi() -> Result<()> {
+    let pokemon = "ditto";
+
+    httpc_test::new_client("https://pokeapi.co/api/v2/pokemon")?
+        .do_get(format!("/{pokemon}").as_str())
+        .await?
+        .print()
+        .await?;
+
+    Ok(())
+}
