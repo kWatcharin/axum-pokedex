@@ -8,35 +8,18 @@ mod routers;
 mod services;
 mod utils;
 
-use routers::fallback::not_found_api;
-use routers::{
-    auth, 
-    root, 
-    users, 
-    web 
-};
-
-use axum::Router;
 use tower_cookies::CookieManagerLayer;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing::Level;
-use tower_http::trace::{ self, TraceLayer };
-
-
-fn routers_index() -> Router {
-    Router::new()
-        .nest("/", root::router())
-        .nest("/auth", auth::router())
-        .nest("/users", users::router())
-        .nest("/web", web::router())
-        .fallback(not_found_api())
-}
+use tower_http::trace::{self, TraceLayer};
  
  
 #[tokio::main]
 async fn main() {
-    let apis = routers_index()
+    configs::load_all_env();
+
+    let apis = routers::index()
         .layer(
             middlewares::cors_layor()
         )
@@ -60,10 +43,10 @@ async fn main() {
         );
 
     tracing_subscriber::fmt().with_target(false).compact().init();
-    tracing::info!("🚀🌟 listening on port => {:?} 🚀🌟", configs::PORT);
+    tracing::info!("🚀🌟 listening on port => {:?} 🚀🌟", configs::env::general::port());
 
     let listener = TcpListener::bind(
-            SocketAddr::from(([0, 0, 0, 0], configs::PORT))
+            SocketAddr::from(([0, 0, 0, 0], configs::env::general::port()))
         ).await
         .unwrap();
 

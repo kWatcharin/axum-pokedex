@@ -27,4 +27,9 @@ pub mod login {
         pub username: String,
         pub password: String
     }
+
+    #[derive(Serialize, Debug)]
+    pub struct ValidateResponse {
+        pub detail: String
+    }
 }
