@@ -1,14 +1,15 @@
-pub mod auth;
-pub mod fallback;
-pub mod items;
-pub mod moves;
-pub mod pokemons;
-pub mod root;
-pub mod setup;
-pub mod users;
-pub mod web;
+mod auth;
+mod fallback;
+mod items;
+mod moves;
+mod pokemons;
+mod root;
+mod setup;
+mod users;
+mod web;
 
 use axum::Router;
+
 
 pub fn index() -> Router {
     Router::new()

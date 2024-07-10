@@ -1,4 +1,4 @@
-use serde::{ Serialize, Deserialize };
+use serde::{Serialize, Deserialize};
 
 pub mod login {
     use super::*;
@@ -21,15 +21,14 @@ pub mod login {
         pub detail: DetailResponse
     }
 
-
     #[derive(Deserialize, Debug)]
-    pub struct ValidatePayload {
+    pub struct Payload {
         pub username: String,
         pub password: String
     }
 
     #[derive(Serialize, Debug)]
-    pub struct ValidateResponse {
+    pub struct Response {
         pub detail: String
     }
 }

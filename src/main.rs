@@ -43,7 +43,7 @@ async fn main() {
         );
 
     tracing_subscriber::fmt().with_target(false).compact().init();
-    tracing::info!("🚀🌟 listening on port => {:?} 🚀🌟", configs::env::general::port());
+    tracing::info!("✅ listening on port => {:?} 🚀🌟🔥", configs::env::general::port());
 
     let listener = TcpListener::bind(
             SocketAddr::from(([0, 0, 0, 0], configs::env::general::port()))
