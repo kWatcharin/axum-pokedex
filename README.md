@@ -10,3 +10,11 @@
 - routers: โฟลเดอร์สำหรับจัดการ endpoints ต่างๆ ภายในโปรเจค
 - services: โฟลเดอร์สำหรับจัดการ Business Logics ต่างๆ ภายในโปรเจค
 - utils: โฟลเดอร์สำหรับจัดการ utils ต่างๆ ภายในโปรเจค เช่น jwt
+
+```rust
+let text: String = String::from("test");
+```
+
+```docker
+docker compose up --build -d
+```
