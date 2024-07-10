@@ -13,6 +13,7 @@ use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing::Level;
 use tower_http::trace::{self, TraceLayer};
+use configs::env::main::PORT;
  
  
 #[tokio::main]
@@ -43,10 +44,10 @@ async fn main() {
         );
 
     tracing_subscriber::fmt().with_target(false).compact().init();
-    tracing::info!("✅ listening on port => {:?} 🚀🌟🔥", configs::env::general::port());
+    tracing::info!("✅ Start APIs server, listening on port => {:?} 🚀🌟🔥", *PORT);
 
     let listener = TcpListener::bind(
-            SocketAddr::from(([0, 0, 0, 0], configs::env::general::port()))
+            SocketAddr::from(([0, 0, 0, 0], *PORT))
         ).await
         .unwrap();
 
