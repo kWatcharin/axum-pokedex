@@ -4,7 +4,7 @@ use axum::{http::StatusCode, Json};
 pub mod login {
     use super::*;
     use crate::models::auth::login::{LoginPayload, DetailResponse, LoginResponse};
-    use crate::errors::auth::{Result, Error};
+    use crate::errors::{Result, Error};
 
     
     pub fn check(model: LoginPayload) -> Result<(StatusCode, Json<LoginResponse>)> {

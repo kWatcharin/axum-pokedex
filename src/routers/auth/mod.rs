@@ -1,6 +1,6 @@
 use axum::{routing::post, http::StatusCode, response::IntoResponse, Router, Json};
 use tower_cookies::{Cookies, Cookie};
-use crate::errors::auth::Result;
+use crate::errors::Result;
 
 
 pub fn router() -> Router {

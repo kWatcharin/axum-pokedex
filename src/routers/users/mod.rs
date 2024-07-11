@@ -1,7 +1,7 @@
 use axum::{routing::{get, post}, Router, Json, http::StatusCode};
 use axum::response::{IntoResponse, Response};
 use serde_json::{json, Value};
-use crate::errors::auth::{ Result, Error };
+use crate::errors::{Result, Error};
 
 
 pub fn router() -> Router {
