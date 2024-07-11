@@ -8,7 +8,7 @@ pub mod main {
 
     pub fn load() {
         from_path("env/.env").ok();
-    }
+    } 
     
     lazy_static! {
         #[derive(Debug)]
