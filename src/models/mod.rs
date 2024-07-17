@@ -5,3 +5,4 @@ pub mod moves;
 pub mod root;
 pub mod users;
 pub mod web;
+pub mod play;

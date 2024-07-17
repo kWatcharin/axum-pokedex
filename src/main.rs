@@ -14,7 +14,7 @@ use tokio::net::TcpListener;
 use tracing::Level;
 use tower_http::trace::{self, TraceLayer};
 use configs::env::main::PORT;
- 
+
  
 #[tokio::main]
 async fn main() {
