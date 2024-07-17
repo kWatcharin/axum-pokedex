@@ -11,8 +11,9 @@ COPY ./ ./
 RUN apt-get update
 RUN apt-get install -y openssl 
 RUN apt-get install pkg-config
-RUN apt-get install libudev-dev
+RUN apt-get install -y libudev-dev
 RUN apt-get install -y musl-tools
+RUN apt-get install -y libssl-dev
 
 RUN rustup target add x86_64-unknown-linux-musl
 
