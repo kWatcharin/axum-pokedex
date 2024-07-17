@@ -7,9 +7,6 @@ WORKDIR /api
 # Copy file from the project to the containter.
 COPY ./ ./
 
-# Set the architecture argument (arm64, i.e. aarch64 as default)
-ARG ARCH=x86_64
-
 # Install Dependencies
 RUN apt-get update
 RUN apt-get install -y openssl 
