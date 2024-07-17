@@ -11,11 +11,11 @@ COPY ./ ./
 ARG ARCH=x86_64
 
 # Install Dependencies
-RUN apt-get update && \
-    apt-get install openssl -y && \
-    apt-get install pkg-config && \
-    apt-get install libudev-dev && \
-    apt-get install -y musl-tools
+RUN apt-get update
+RUN apt-get install -y openssl 
+RUN apt-get install pkg-config
+RUN apt-get install libudev-dev
+RUN apt-get install -y musl-tools
 
 RUN rustup target add x86_64-unknown-linux-musl
 
