@@ -6,7 +6,7 @@ fn root_url() -> String {
 }
 
 
-// => /auth/loging/validate 
+// => /auth/login/validate 
 #[tokio::test]
 async fn login_validate() -> Result<()> {
     let payload = json!({

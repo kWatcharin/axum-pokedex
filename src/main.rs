@@ -13,14 +13,23 @@ use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing::Level;
 use tower_http::trace::{self, TraceLayer};
-use configs::env::main::PORT;
+use configs::env::{main::PORT, database::posgresql};
+use utils::db::postgres_pool; 
 
- 
+
 #[tokio::main]
-async fn main() {
+async fn main() -> core::result::Result<(), Box<dyn std::error::Error>> {
+    /* Start Tracing */
+    tracing_subscriber::fmt().with_target(false).compact().init();
+
+    /* Enveronments */
     configs::load_all_env();
 
-    let apis = routers::index()
+    /* postgresql */
+    let postgresql_pool = postgres_pool(&*posgresql::URL, &*posgresql::DB, *posgresql::MAX_CONNECTION)
+        .await?;
+
+    let apis = routers::index(postgresql_pool.clone())
         .layer(
             middlewares::cors_layor()
         )
@@ -43,17 +52,17 @@ async fn main() {
                 )
         );
 
-    tracing_subscriber::fmt().with_target(false).compact().init();
-    tracing::info!("✅ Start APIs server, listening on port => {:?} 🚀🌟🔥", *PORT);
-
-    let listener = TcpListener::bind(
-            SocketAddr::from(([0, 0, 0, 0], *PORT))
-        ).await
+    let listener = TcpListener::bind(SocketAddr::from(([0, 0, 0, 0], *PORT)))
+        .await
         .unwrap();
+
+    tracing::info!("✅ Start APIs server, listening on port => {:?} 🚀🌟", *PORT);
 
     axum::serve(listener, apis.into_make_service())
         .await
         .unwrap();
+
+    Ok(())
 }
 
 
