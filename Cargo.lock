@@ -373,6 +373,7 @@ dependencies = [
  "httpc-test",
  "jsonwebtoken",
  "lazy_static",
+ "log",
  "openssl",
  "rand",
  "reqwest 0.12.5",

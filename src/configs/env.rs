@@ -58,8 +58,36 @@ pub mod database {
 
         lazy_static! {
             #[derive(Debug)]
-            pub static ref DB: String = env::var("POSTGRESQL_DB")
-                .expect("POSTGRESQL_DB must be set!");
+            pub static ref HOST: String = env::var("POSTGRES_HOST")
+                .expect("POSTGRES_HOST must be set!");
+
+            #[derive(Debug)]
+            pub static ref PORT: u16 = env::var("POSTGRES_PORT")
+                .expect("POSTGRES_PORT must be set!")
+                .parse::<u16>()
+                .expect("POSTGRES_PORT must be number!");
+
+            #[derive(Debug)]
+            pub static ref DB: String = env::var("POSTGRES_DB")
+                .expect("POSTGRES_DB must be set!");
+
+            #[derive(Debug)]
+            pub static ref USER: String = env::var("POSTGRES_USER")
+                .expect("POSTGRES_USER must be set!");
+
+            #[derive(Debug)]
+            pub static ref PASSWORD: String = env::var("POSTGRES_PASSWORD")
+                .expect("POSTGRES_PASSWORD must be set!");
+
+            #[derive(Debug)]
+            pub static ref URL: String = env::var("POSTGRES_URL")
+                .expect("POSTGRES_URL must be set!");
+
+            #[derive(Debug)]
+            pub static ref MAX_CONNECTION: u32 = env::var("POSTGRES_MAX_CONNECTION")
+                .expect("POSTGRES_MAX_CONNECTION must be set!")
+                .parse::<u32>()
+                .expect("POSTGRES_MAX_CONNECTION must be number");
         }
     }
 

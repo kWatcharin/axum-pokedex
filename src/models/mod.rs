@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod main;
 pub mod pokemons;
 pub mod items;
 pub mod moves;
