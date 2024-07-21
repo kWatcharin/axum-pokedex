@@ -30,7 +30,7 @@ async fn main() -> core::result::Result<(), Box<dyn std::error::Error>> {
     /* postgresql */
     let postgresql 
         = postgres_pool(&*posgresql::URL, &*posgresql::DB, *posgresql::MAX_CONNECTION)
-        .await?;
+            .await?;
 
     /* mysql */
     let mysql: Option<Pool<MySql>>

@@ -1,7 +1,5 @@
 use sqlx::{
-    mysql::{MySqlPoolOptions, MySql}, 
-    postgres::{PgPoolOptions, Postgres}, 
-    Pool
+    mysql::{MySqlPoolOptions, MySql}, postgres::{PgPoolOptions, Postgres}, Pool
 };
 
 
@@ -14,11 +12,11 @@ pub async fn postgres_pool(db_url: &str, db: &str, max_connection: u32) -> Resul
             .connect(db_url)
             .await {
                 Ok(pool) => {
-                    tracing::info!("✅ Connect to the database ({:#?}) is successful!", db);
+                    tracing::info!("✅ Connect to the database =>> ({:#?}) is successful!", db);
                     pool
                 },
                 Err(err) => {
-                    tracing::error!("🔥 Failed to connect the database({:#?}) :{:#?}", db, err);
+                    tracing::error!("🔥 Failed to connect the database =>> ({:#?}) :{:#?}", db, err);
                     std::process::exit(1);
                 }
             }
@@ -33,11 +31,11 @@ pub async fn mysql_pool(db_url: &str, db: &str, max_connection: u32) -> Result<P
             .connect(db_url)
             .await {
                 Ok(pool) => {
-                    tracing::info!("✅ Connect to the database ({:#?}) is successful!", db);
+                    tracing::info!("✅ Connect to the database =>> ({:#?}) is successful!", db);
                     pool
                 },
                 Err(err) => {
-                    tracing::error!("🔥 Failed to connect the database({:#?}) :{:#?}", db, err);
+                    tracing::error!("🔥 Failed to connect the database =>> ({:#?}) :{:#?}", db, err);
                     std::process::exit(1);
                 }
             }
@@ -53,11 +51,11 @@ pub async fn mariadb_pool(db_url: &str, db: &str, max_connection: u32) -> Result
             .connect(db_url)
             .await {
                 Ok(pool) => {
-                    tracing::info!("✅ Connect to the database ({:#?}) is successful!", db);
+                    tracing::info!("✅ Connect to the database =>> ({:#?}) is successful!", db);
                     pool
                 },
                 Err(err) => {
-                    tracing::error!("🔥 Failed to connect the database({:#?}) :{:#?}", db, err);
+                    tracing::error!("🔥 Failed to connect the database =>> ({:#?}) :{:#?}", db, err);
                     std::process::exit(1)
                 }
         }

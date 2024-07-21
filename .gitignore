@@ -1,1 +1,41 @@
-/target
+# ไฟล์ที่สร้างโดย Rust compiler
+/target/
+
+# ไฟล์ล็อคของ Cargo
+Cargo.lock
+
+# ไฟล์และโฟลเดอร์ของ rustfmt
+**/*.rs.bk
+
+# ไฟล์ที่สร้างโดย IDE หรือ text editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ไฟล์ระบบปฏิบัติการ
+.DS_Store
+Thumbs.db
+
+# ไฟล์ log
+*.log
+
+# ไฟล์ environment variables (ถ้ามี)
+# .env
+
+# ไฟล์ binary ที่คอมไพล์แล้ว
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ไฟล์การทดสอบและครอบคลุมโค้ด (coverage)
+*.profraw
+
+# ไฟล์การ documentation ที่สร้างอัตโนมัติ (ถ้าคุณใช้ cargo doc)
+/doc/
+
+# ไฟล์ชั่วคราวอื่นๆ
+*.tmp
+*.bak
+*.backup

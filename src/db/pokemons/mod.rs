@@ -1,34 +1,30 @@
-use sqlx::{self, Pool, Postgres, FromRow};
+use sqlx::{self, Pool, Postgres};
+use crate::errors::{Error, Result};
 
 
 pub mod poke_test {
     use super::*;
+    use crate::models::pokemons::poke_test::db::PokeTest;
 
-    #[derive(Debug, FromRow)]
-    #[allow(unused)]
-    pub struct PokeTest {
-        pub rowid: i32,
-        pub poke_code: String,
-        pub poke_name: String,
-        pub lv: i32
-    }
-
-    pub async fn fetch_all(pool: &Pool<Postgres>) -> core::result::Result<Vec<PokeTest>, sqlx::Error> {        
-        let sql = format!(
-            r#"
-                SELECT 
-                    rowid, 
-                    poke_code, 
-                    poke_name, 
-                    lv 
-                FROM poke_test
-            "#
-        );
+    pub async fn fetch_all(pool: &Pool<Postgres>) -> Result<Vec<PokeTest>> {        
+        let sql = format!(r#"
+            SELECT 
+                rowid, 
+                poke_code, 
+                poke_name, 
+                lv,
+                create_date
+            FROM 
+                poke_test
+        "#);
         
-        let poke_test: Vec<PokeTest> = sqlx::query_as::<_, PokeTest>(&sql)
+        let poke_test = sqlx::query_as::<_, PokeTest>(&sql)
             .fetch_all(pool)
-            .await?;
+            .await;
 
-        Ok(poke_test)
+        match poke_test {
+            Ok(q) => Ok(q),
+            Err(_) => Err(Error::DatabaseQueryError)
+        }
     }
 }
