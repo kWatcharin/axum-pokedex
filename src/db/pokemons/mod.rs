@@ -6,14 +6,14 @@ pub mod poke_test {
 
     #[derive(Debug, FromRow)]
     #[allow(unused)]
-    struct PokeTest {
-        rowid: i32,
-        poke_code: String,
-        poke_name: String,
-        lv: i32
+    pub struct PokeTest {
+        pub rowid: i32,
+        pub poke_code: String,
+        pub poke_name: String,
+        pub lv: i32
     }
 
-    pub async fn fetch_all(pool: &Pool<Postgres>) -> core::result::Result<(), sqlx::Error> {        
+    pub async fn fetch_all(pool: &Pool<Postgres>) -> core::result::Result<Vec<PokeTest>, sqlx::Error> {        
         let sql = format!(
             r#"
                 SELECT 
@@ -29,10 +29,6 @@ pub mod poke_test {
             .fetch_all(pool)
             .await?;
 
-        for r in poke_test.iter() {
-            println!("{:?}", r);
-        }
-
-        Ok(())
+        Ok(poke_test)
     }
 }

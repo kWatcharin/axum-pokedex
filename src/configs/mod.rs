@@ -1,6 +1,5 @@
 pub mod env;
 
-
 pub fn load_all_env() {
     env::main::load();
     env::database::mysql::load();
