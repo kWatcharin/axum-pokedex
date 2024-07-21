@@ -2,7 +2,7 @@
 use axum::{routing::post, response::IntoResponse, Router, Json, extract::State};
 use tower_cookies::{Cookies, Cookie};
 use crate::models::main::db::ConnPools;
-use crate::errors::Result;
+use crate::errors::{Result, Error};
 
 
 pub fn router(pools: ConnPools) -> Router {
@@ -23,6 +23,14 @@ mod poke_test {
     }
 
     async fn list(State(pools): State<ConnPools>) -> Result<impl IntoResponse> {
-        Ok(poke_test::list(&pools.postgresql.unwrap()).await?)
+        let postgresql_pool = match pools.postgresql {
+            Some(p) => p,
+            None => return Err(Error::InternalServerError)
+        };
+
+        Ok(
+            poke_test::list(&postgresql_pool)
+                .await?
+        )
     }
 }

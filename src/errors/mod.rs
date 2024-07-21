@@ -27,7 +27,15 @@ pub enum Error {
 
     #[allow(unused)]
     #[error("Not found data")]
-    NotFoundData
+    NotFoundData,
+
+    #[allow(unused)]
+    #[error("Internal server error")]
+    InternalServerError,
+
+    #[allow(unused)]
+    #[error("Service unavailable")]
+    ServiceUnavailable
 }
 
 pub type Result<T, E = Error> = axum::response::Result<T, E>;
@@ -86,6 +94,20 @@ impl IntoResponse for Error {
                 auth_error_message = AuthErrorMessage { message: "not found data".to_string() };
                 (
                     StatusCode::NOT_FOUND, Json(AuthErrorResponse { detail: auth_error_message })
+                )
+            },
+
+            Error::InternalServerError => {
+                auth_error_message = AuthErrorMessage { message: "internal server error".to_string() };
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR, Json(AuthErrorResponse { detail: auth_error_message })
+                )
+            },
+
+            Error::ServiceUnavailable => {
+                auth_error_message = AuthErrorMessage { message: "service unavailable".to_string() };
+                (
+                    StatusCode::SERVICE_UNAVAILABLE, Json(AuthErrorResponse { detail: auth_error_message })
                 )
             }
         };
