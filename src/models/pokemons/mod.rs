@@ -8,6 +8,13 @@ pub mod poke_test {
     pub mod api {
         #[allow(unused)]
         use super::*;
+
+        #[derive(Debug, Clone, Serialize, Deserialize)]
+        pub struct CreatePokemonPayload {
+            pub poke_code: String,
+            pub poke_name: String,
+            pub lv: i32
+        }
     }
 
     pub mod services {
@@ -47,6 +54,19 @@ pub mod poke_test {
             pub poke_name: String,
             pub lv: i32,
             pub create_date: NaiveDate
+        }
+
+        #[derive(Debug, FromRow)]
+        #[allow(unused)]
+        pub struct NewPokeTest {
+            rowid: i32 
+        }
+        
+        #[derive(Debug, FromRow)]
+        pub struct CreateNewPokeTest {
+            pub poke_code: String,
+            pub poke_name: String,
+            pub lv: i32
         }
     }   
 }
