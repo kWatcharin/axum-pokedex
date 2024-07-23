@@ -14,12 +14,16 @@ pub fn router(pools: ConnPools) -> Router {
 mod poke_test {
     use super::*;
     use crate::services::pokemon::poke_test;
-    use crate::models::pokemons::poke_test::api::CreatePokemonPayload;
+    use crate::models::pokemons::poke_test::api::{
+        CreatePokemonPayload, UpdatePokeTestPayload
+    };
+
 
     pub fn router(pools: ConnPools) -> Router {
         Router::new()
             .route("/list", post(list))
             .route("/create_new_poke", post(create_new_poke))
+            .route("/update", post(update))
             .with_state(pools)
     }
 
@@ -35,10 +39,7 @@ mod poke_test {
         )
     }
 
-    async fn create_new_poke(
-        pools: State<ConnPools>, 
-        payload: Json<CreatePokemonPayload>
-    ) -> Result<impl IntoResponse> {
+    async fn create_new_poke(pools: State<ConnPools>, payload: Json<CreatePokemonPayload>) -> Result<impl IntoResponse> {
         let postgresql_pool = match &pools.postgresql {
             Some(p) => p,
             None => return Err(Error::InternalServerError)
@@ -50,6 +51,25 @@ mod poke_test {
         };
         Ok(
             poke_test::create_new(postgresql_pool, body)
+                .await?
+        )
+    }
+
+    async fn update(pools: State<ConnPools>, payload: Json<UpdatePokeTestPayload>) -> Result<impl IntoResponse> {
+        let postgresql_pool = match &pools.postgresql {
+            Some(p) => p,
+            None => return Err(Error::InternalServerError)
+        };
+
+        let body = UpdatePokeTestPayload {
+            poke_code: payload.poke_code.to_owned(),
+            poke_name: payload.poke_name.to_owned(),
+            lv: payload.lv.to_owned(),
+            rowid: payload.rowid.to_owned()
+        };
+
+        Ok(
+            poke_test::update(postgresql_pool, body)
                 .await?
         )
     }
