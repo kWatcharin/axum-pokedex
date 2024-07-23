@@ -72,7 +72,7 @@ pub mod poke_test {
         }
         
         #[derive(Debug, FromRow)]
-        pub struct CreateNewPokeTest {
+        pub struct CreatePokeTest {
             pub poke_code: String,
             pub poke_name: String,
             pub lv: i32
