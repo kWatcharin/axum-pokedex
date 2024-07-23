@@ -15,6 +15,14 @@ pub mod poke_test {
             pub poke_name: String,
             pub lv: i32
         }
+
+        #[derive(Debug, Clone, Serialize, Deserialize)]
+        pub struct UpdatePokeTestPayload {
+            pub poke_code: String,
+            pub poke_name: String,
+            pub lv: i32,
+            pub rowid: i32
+        }
     }
 
     pub mod services {
@@ -41,13 +49,20 @@ pub mod poke_test {
                 }
             }
         }
+
+        #[derive(Debug, Clone, Serialize, Deserialize)]
+        pub struct UpdatePokeTest {
+            pub poke_code: String,
+            pub poke_name: String,
+            pub lv: i32,
+            pub rowid: i32
+        }
     }
 
     pub mod db {
         use super::*;
 
         #[derive(Debug, FromRow)]
-        #[allow(unused)]
         pub struct PokeTest {
             pub rowid: i32,
             pub poke_code: String,
@@ -55,18 +70,20 @@ pub mod poke_test {
             pub lv: i32,
             pub create_date: NaiveDate
         }
-
-        #[derive(Debug, FromRow)]
-        #[allow(unused)]
-        pub struct NewPokeTest {
-            rowid: i32 
-        }
         
         #[derive(Debug, FromRow)]
         pub struct CreateNewPokeTest {
             pub poke_code: String,
             pub poke_name: String,
             pub lv: i32
+        }
+
+        #[derive(Debug, FromRow)]
+        pub struct UpdatePokeTest {
+            pub poke_code: String,
+            pub poke_name: String,
+            pub lv: i32,
+            pub rowid: i32
         }
     }   
 }
