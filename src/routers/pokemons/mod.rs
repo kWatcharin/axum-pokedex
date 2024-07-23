@@ -22,14 +22,15 @@ mod poke_test {
     pub fn router(pools: ConnPools) -> Router {
         Router::new()
             .route("/list", post(list))
-            .route("/create_new_poke", post(create_new_poke))
+            .route("/create", post(create))
             .route("/update", post(update))
             .with_state(pools)
     }
+    
 
     async fn list(State(pools): State<ConnPools>) -> Result<impl IntoResponse> {
         let postgresql_pool = match &pools.postgresql {
-            Some(p) => p,
+            Some(pool) => pool,
             None => return Err(Error::InternalServerError)
         };
 
@@ -39,25 +40,29 @@ mod poke_test {
         )
     }
 
-    async fn create_new_poke(pools: State<ConnPools>, payload: Json<CreatePokemonPayload>) -> Result<impl IntoResponse> {
+
+    async fn create(pools: State<ConnPools>, payload: Json<CreatePokemonPayload>) -> Result<impl IntoResponse> {
         let postgresql_pool = match &pools.postgresql {
-            Some(p) => p,
+            Some(pool) => pool,
             None => return Err(Error::InternalServerError)
         };
+
         let body = CreatePokemonPayload {
             poke_code: payload.poke_code.to_owned(),
             poke_name: payload.poke_name.to_owned(),
             lv: payload.lv.to_owned()
         };
+
         Ok(
-            poke_test::create_new(postgresql_pool, body)
+            poke_test::create(postgresql_pool, body)
                 .await?
         )
     }
 
+
     async fn update(pools: State<ConnPools>, payload: Json<UpdatePokeTestPayload>) -> Result<impl IntoResponse> {
         let postgresql_pool = match &pools.postgresql {
-            Some(p) => p,
+            Some(pool) => pool,
             None => return Err(Error::InternalServerError)
         };
 

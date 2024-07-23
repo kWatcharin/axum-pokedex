@@ -1,4 +1,4 @@
-use sqlx::{self, Pool, Postgres};
+use sqlx::{Pool, Postgres};
 
 
 type Result<T, E = sqlx::error::Error> = core::result::Result<T, E>;
@@ -6,11 +6,11 @@ type Result<T, E = sqlx::error::Error> = core::result::Result<T, E>;
 pub mod poke_test {
     use super::*;
     use crate::models::pokemons::poke_test::db::{
-        CreateNewPokeTest, PokeTest, UpdatePokeTest
+        CreatePokeTest, PokeTest, UpdatePokeTest
     };
 
 
-    pub async fn fetch_all(pool: &Pool<Postgres>) -> Result<Vec<PokeTest>> {        
+    pub async fn list(pool: &Pool<Postgres>) -> Result<Vec<PokeTest>> {        
         let sql = format!(r#"
             SELECT 
                 rowid, 
@@ -20,10 +20,11 @@ pub mod poke_test {
                 create_date
             FROM 
                 poke_test
-            ORDER BY rowid;
+            ORDER BY 
+                rowid;
         "#);
         
-        let executor = sqlx::query_as::<_, PokeTest>(&sql)
+        let executor = sqlx::query_as::<Postgres, PokeTest>(&sql)
             .fetch_all(pool)
             .await?;
 
@@ -31,7 +32,7 @@ pub mod poke_test {
     }
 
     
-    pub async fn create_new(pool: &Pool<Postgres>, create_new_poke_test: CreateNewPokeTest) -> Result<u64> {
+    pub async fn create(pool: &Pool<Postgres>, create_new_poke_test: CreatePokeTest) -> Result<u64> {
         let sql = format!(r#"
             INSERT INTO poke_test(
                 poke_code, poke_name, lv, create_date
@@ -52,7 +53,6 @@ pub mod poke_test {
     }
 
 
-    #[allow(unused)]
     pub async fn update(pool: &Pool<Postgres>, update_poke_test: UpdatePokeTest) -> Result<u64> {
         let sql = format!(r#"
             UPDATE poke_test SET
