@@ -1,10 +1,13 @@
+mod backend;
 mod configs; 
 mod db;
 mod errors;
+mod logs;
 mod middlewares;
 mod models;
 mod resources;
 mod routers;
+mod schema;
 mod services;
 mod utils;
 

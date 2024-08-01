@@ -28,6 +28,20 @@ pub mod main {
         #[derive(Debug)]
         pub static ref API_KEY: String = env::var("SECRET_KEY")
             .expect("SECRET_KEY must be set!");
+
+        #[derive(Debug)]
+        pub static ref SERVICE_ACCOUNT: String = env::var("SERVICE_ACCOUNT")
+            .expect("SERVICE_ACCOOUNT must be set!");
+
+        #[derive(Debug)]
+        pub static ref CLIENT_ID: u8 = env::var("CLIENT_ID")
+            .expect("CLIENT_ID must be set!")
+            .parse::<u8>()
+            .expect("CLIENT_ID mus be number!");
+
+        #[derive(Debug)]
+        pub static ref CLIENT_SECRET: String = env::var("CLIENT_SECRET")
+            .expect("CLIENT_SECRET must be set!");
     }
 }
 
