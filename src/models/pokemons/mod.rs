@@ -34,7 +34,8 @@ pub mod poke_test {
             pub poke_code: String,
             pub poke_name: String,
             pub lv: i32,
-            pub create_date: NaiveDate
+            pub create_date: NaiveDate,
+            pub idx: usize
         }
 
         #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -78,12 +79,24 @@ pub mod poke_test {
             pub lv: i32
         }
 
+        impl CreatePokeTest {
+            pub fn new(poke_code: String, poke_name: String, lv: i32) -> Self {
+                Self { poke_code, poke_name, lv }
+            }
+        }
+
         #[derive(Debug, FromRow)]
         pub struct UpdatePokeTest {
             pub poke_code: String,
             pub poke_name: String,
             pub lv: i32,
             pub rowid: i32
+        }
+
+        impl UpdatePokeTest {
+            pub fn new(poke_code: String, poke_name: String, lv: i32, rowid: i32) -> Self {
+                Self { poke_code, poke_name, lv, rowid }
+            }
         }
     }   
 }
