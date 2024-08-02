@@ -1,7 +1,7 @@
 use sqlx::{Pool, postgres::Postgres};
 use axum::{http::StatusCode, Json};
 use serde_json::{json, Value};
-use crate::errors::{Error, Result};
+use crate::errors::{Result, Error};
 
 
 pub mod poke_test {
@@ -20,16 +20,17 @@ pub mod poke_test {
         
     pub async fn list(pool: &Pool<Postgres>) -> Result<(StatusCode, Json<VecPokeList>)> {
         match poke_test::list(pool).await {
-            Ok(rows) => {
+            Ok(poke_test_rows) => {
                 let mut poke_data = Vec::new();
 
-                for (_index, row) in rows.into_iter().enumerate() {
+                for (index, row) in poke_test_rows.into_iter().enumerate() {
                     poke_data.push(PokeList {
                         rowid: row.rowid,
                         poke_code: row.poke_code,
                         poke_name: row.poke_name,
                         lv: row.lv,
-                        create_date: row.create_date
+                        create_date: row.create_date,
+                        idx: index
                     });
                 }
                 
@@ -37,29 +38,24 @@ pub mod poke_test {
                     (StatusCode::OK, Json(VecPokeList::new(poke_data)))
                 )
             },
-            Err(_) => Err(Error::ServiceUnavailable)
+            Err(_) => Err(Error::DatabaseQueryError)
         }        
     }
 
 
-    pub async fn create(pool: &Pool<Postgres>, create_pokemon_payload: CreatePokemonPayload) -> Result<(StatusCode, Json<Value>)> {
-        let create_new_poke_test = CreatePokeTest {
-            poke_code: create_pokemon_payload.poke_code,
-            poke_name: create_pokemon_payload.poke_name,
-            lv: create_pokemon_payload.lv
-        };
-
-        let result = poke_test::create(pool, create_new_poke_test)
-            .await;
+    pub async fn create(pool: &Pool<Postgres>, schema: CreatePokemonPayload) -> Result<(StatusCode, Json<Value>)> {
+        let model = CreatePokeTest::new(
+            schema.poke_code, schema.poke_name, schema.lv
+        );
         
-        match result {
-            Ok(rowcount) => {
-                if rowcount > 0 {
+        match poke_test::create(pool, model).await {
+            Ok(count_affected) => {
+                if count_affected > 0 {
                     Ok(
                         (StatusCode::CREATED, Json(json!({"detail": "create item successful"})))
                     )
                 } else {
-                    Err(Error::ServiceUnavailable)
+                    Err(Error::CreateItemFail)
                 }
             },
             Err(_) => Err(Error::DatabaseQueryError)
@@ -67,24 +63,19 @@ pub mod poke_test {
     }
 
 
-    pub async fn update(pool: &Pool<Postgres>, update_poke_test: UpdatePokeTestPayload) -> Result<(StatusCode, Json<Value>)> {
-        let update_poke_test = UpdatePokeTest {
-            poke_code: update_poke_test.poke_code,
-            poke_name: update_poke_test.poke_name,
-            lv: update_poke_test.lv,
-            rowid: update_poke_test.rowid
-        };
+    pub async fn update(pool: &Pool<Postgres>, schema: UpdatePokeTestPayload) -> Result<(StatusCode, Json<Value>)> {
+        let model = UpdatePokeTest::new(
+            schema.poke_code, schema.poke_name, schema.lv, schema.rowid
+        );
 
-        let result = poke_test::update(pool, update_poke_test).await;
-
-        match result {
-            Ok(rowcount) => {
-                if rowcount > 0 {
+        match poke_test::update(pool, model).await {
+            Ok(count_affected) => {
+                if count_affected > 0 {
                     Ok(
                         (StatusCode::CREATED, Json(json!({"detail": "update item successful"})))
                     )
                 } else {
-                    Err(Error::ServiceUnavailable)
+                    Err(Error::UpdateItemFail)
                 }
             },
             Err(_) => Err(Error::DatabaseQueryError)

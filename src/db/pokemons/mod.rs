@@ -32,7 +32,7 @@ pub mod poke_test {
     }
 
     
-    pub async fn create(pool: &Pool<Postgres>, create_new_poke_test: CreatePokeTest) -> Result<u64> {
+    pub async fn create(pool: &Pool<Postgres>, model: CreatePokeTest) -> Result<u64> {
         let sql = format!(r#"
             INSERT INTO poke_test(
                 poke_code, poke_name, lv, create_date
@@ -43,9 +43,9 @@ pub mod poke_test {
         "#);
 
         let executor = sqlx::query(&sql)
-            .bind(create_new_poke_test.poke_code)
-            .bind(create_new_poke_test.poke_name)
-            .bind(create_new_poke_test.lv)
+            .bind(model.poke_code)
+            .bind(model.poke_name)
+            .bind(model.lv)
             .execute(pool)
             .await?;
 
@@ -53,7 +53,7 @@ pub mod poke_test {
     }
 
 
-    pub async fn update(pool: &Pool<Postgres>, update_poke_test: UpdatePokeTest) -> Result<u64> {
+    pub async fn update(pool: &Pool<Postgres>, model: UpdatePokeTest) -> Result<u64> {
         let sql = format!(r#"
             UPDATE poke_test SET
                 poke_code = $1,
@@ -63,10 +63,10 @@ pub mod poke_test {
             WHERE rowid = $4
         "#);
         let executor = sqlx::query(&sql)
-            .bind(update_poke_test.poke_code)
-            .bind(update_poke_test.poke_name)
-            .bind(update_poke_test.lv)
-            .bind(update_poke_test.rowid)
+            .bind(model.poke_code)
+            .bind(model.poke_name)
+            .bind(model.lv)
+            .bind(model.rowid)
             .execute(pool)
             .await?;
 
