@@ -37,7 +37,10 @@ pub enum Error {
     CreateItemFail,
 
     #[error("Update item fail")]
-    UpdateItemFail
+    UpdateItemFail,
+
+    #[error("Too many requests.")]
+    TooManyRequests
 }
 
 
@@ -67,68 +70,74 @@ impl ErrorResponse {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        let auth_error_message;
+        let error_message;
         let error_response =  match self {
             Error::LoginFailed => {
-                auth_error_message = ErrorMessage { message: "unauthorized.".to_string() };
+                error_message = ErrorMessage { message: "Unauthorized.".to_string() };
                 (
-                    StatusCode::UNAUTHORIZED, Json(ErrorResponse { detail: auth_error_message })
+                    StatusCode::UNAUTHORIZED, Json(ErrorResponse { detail: error_message })
                 )
             },
             Error::DatabaseQueryError => {
-                auth_error_message = ErrorMessage { message: "database query error.".to_string() };
+                error_message = ErrorMessage { message: "Database query error.".to_string() };
                 (
-                    StatusCode::INTERNAL_SERVER_ERROR, Json(ErrorResponse { detail: auth_error_message })
+                    StatusCode::INTERNAL_SERVER_ERROR, Json(ErrorResponse { detail: error_message })
                 )
             },
             Error::InvalidUsername => {
-                auth_error_message = ErrorMessage { message: "invalid username.".to_string() };
+                error_message = ErrorMessage { message: "Invalid username.".to_string() };
                 (
-                    StatusCode::BAD_REQUEST, Json(ErrorResponse { detail: auth_error_message })
+                    StatusCode::BAD_REQUEST, Json(ErrorResponse { detail: error_message })
                 )
             },
             Error::InvalidPassword => {
-                auth_error_message = ErrorMessage { message: "invalid password.".to_string() };
+                error_message = ErrorMessage { message: "Invalid password.".to_string() };
                 (
-                    StatusCode::BAD_REQUEST, Json(ErrorResponse { detail: auth_error_message })
+                    StatusCode::BAD_REQUEST, Json(ErrorResponse { detail: error_message })
                 )
             },
             Error::InvalidDataFormat => {
-                auth_error_message = ErrorMessage { message: "invalid data format.".to_string() };
+                error_message = ErrorMessage { message: "invalid data format.".to_string() };
                 (
-                    StatusCode::BAD_REQUEST, Json(ErrorResponse { detail: auth_error_message })
+                    StatusCode::BAD_REQUEST, Json(ErrorResponse { detail: error_message })
                 )
             }
             Error::NotFoundData => {
-                auth_error_message = ErrorMessage { message: "not found data.".to_string() };
+                error_message = ErrorMessage { message: "Not found data.".to_string() };
                 (
                     StatusCode::NOT_FOUND, Json(ErrorResponse { 
-                        detail: auth_error_message 
+                        detail: error_message 
                     })
                 )
             },
             Error::InternalServerError => {
-                auth_error_message = ErrorMessage { message: "internal server error.".to_string() };
+                error_message = ErrorMessage { message: "Internal server error.".to_string() };
                 (
-                    StatusCode::INTERNAL_SERVER_ERROR, Json(ErrorResponse { detail: auth_error_message })
+                    StatusCode::INTERNAL_SERVER_ERROR, Json(ErrorResponse { detail: error_message })
                 )
             },
             Error::ServiceUnavailable => {
-                auth_error_message = ErrorMessage { message: "service unavailable.".to_string() };
+                error_message = ErrorMessage { message: "Service unavailable.".to_string() };
                 (
-                    StatusCode::SERVICE_UNAVAILABLE, Json(ErrorResponse { detail: auth_error_message })
+                    StatusCode::SERVICE_UNAVAILABLE, Json(ErrorResponse { detail: error_message })
                 )
             },
             Error::CreateItemFail => {
-                auth_error_message = ErrorMessage { message: "create item fail.".to_string() };
+                error_message = ErrorMessage { message: "Create item fail.".to_string() };
                 (
-                    StatusCode::UNPROCESSABLE_ENTITY, Json(ErrorResponse {detail: auth_error_message })
+                    StatusCode::UNPROCESSABLE_ENTITY, Json(ErrorResponse {detail: error_message })
                 )
             },
             Error::UpdateItemFail => {
-                auth_error_message = ErrorMessage { message: "update item fail.".to_string() };
+                error_message = ErrorMessage { message: "Update item fail.".to_string() };
                 (
-                    StatusCode::UNPROCESSABLE_ENTITY, Json(ErrorResponse {detail: auth_error_message })
+                    StatusCode::UNPROCESSABLE_ENTITY, Json(ErrorResponse {detail: error_message })
+                )
+            },
+            Error::TooManyRequests => {
+                error_message = ErrorMessage { message: "To many requests".to_string() };
+                (
+                    StatusCode::TOO_MANY_REQUESTS, Json(ErrorResponse {detail: error_message})
                 )
             }
         };

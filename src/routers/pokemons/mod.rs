@@ -53,6 +53,10 @@ mod poke_test {
             lv: payload.lv.to_owned()
         };
 
+        let body = match payload {
+            Json(data) => data
+        };
+
         Ok(
             poke_test::create(postgresql_pool, body)
                 .await?
@@ -66,11 +70,8 @@ mod poke_test {
             None => return Err(Error::InternalServerError)
         };
 
-        let body = UpdatePokeTestPayload {
-            poke_code: payload.poke_code.to_owned(),
-            poke_name: payload.poke_name.to_owned(),
-            lv: payload.lv.to_owned(),
-            rowid: payload.rowid.to_owned()
+        let body = match payload {
+            Json(data) => data
         };
 
         Ok(

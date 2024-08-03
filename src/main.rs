@@ -11,11 +11,11 @@ mod schema;
 mod services;
 mod utils;
 
-use tower_cookies::CookieManagerLayer;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing::Level;
 use tower_http::trace::{self, TraceLayer};
+use tower_cookies::CookieManagerLayer;
 use configs::env::{database::posgresql, main::PORT};
 use utils::db::postgres_pool; 
 use models::main::db::ConnPools;

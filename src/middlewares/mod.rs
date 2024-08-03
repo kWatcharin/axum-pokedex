@@ -1,3 +1,5 @@
+pub mod rate_limit;
+
 use tower_http::cors::CorsLayer;
 use axum::http::{ header::{ ACCEPT, AUTHORIZATION, CONTENT_TYPE }, Method };
 
