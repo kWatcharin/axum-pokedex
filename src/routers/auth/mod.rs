@@ -1,6 +1,8 @@
+use std::sync::{Arc, RwLock};
 use axum::{routing::post, response::IntoResponse, Router, Json, extract::State};
 #[allow(unused)]
 use tower_cookies::{Cookies, Cookie};
+use sqlx::{Pool, postgres::Postgres};
 use crate::errors::Result;
 use crate::models::main::db::ConnPools;
 
@@ -27,6 +29,8 @@ mod login {
         State(pool): State<ConnPools>, cookies: Cookies, _payload: Json<login::Payload>
     ) -> Result<impl IntoResponse> {
         cookies.add(Cookie::new("auth-token", "user-1.exp.sign"));
-        Ok(poke_test::list(&pool.postgresql.unwrap()).await?)
+        let pg_pool: Arc<RwLock<sqlx::Pool<Postgres>>> = Arc::clone(&pool.postgresql.unwrap());
+        let pg_pool: Pool<Postgres> = pg_pool.read().unwrap().clone();
+        Ok(poke_test::list(&pg_pool).await?)
     }
 }

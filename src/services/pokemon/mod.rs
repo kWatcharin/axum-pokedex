@@ -22,7 +22,6 @@ pub mod poke_test {
         match poke_test::list(pool).await {
             Ok(poke_test_rows) => {
                 let mut poke_data = Vec::new();
-
                 for (index, row) in poke_test_rows.into_iter().enumerate() {
                     poke_data.push(PokeList {
                         rowid: row.rowid,
@@ -47,7 +46,6 @@ pub mod poke_test {
         let model = CreatePokeTest::new(
             schema.poke_code, schema.poke_name, schema.lv
         );
-        
         match poke_test::create(pool, model).await {
             Ok(count_affected) => {
                 if count_affected > 0 {

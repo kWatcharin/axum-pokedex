@@ -32,7 +32,7 @@ impl Claims {
         }
     }
 
-    pub fn make_jwt() -> Result<String, Box<dyn std::error::Error>>{
+    pub fn make_jwt() -> Result<String>{
         let mut header = Header::new(Algorithm::RS256); 
         header.typ = Some("JWT".to_string());
 
@@ -47,7 +47,12 @@ impl Claims {
             exp
         );
 
-        let jwt = encode(&header, &claims, &EncodingKey::from_rsa_pem( SECRET_KEY.clone().as_bytes())?)?;
-        Ok(jwt)
+        let jwt = encode(
+            &header, 
+            &claims, 
+            &EncodingKey::from_rsa_pem( SECRET_KEY.clone().as_bytes())?
+        );
+
+        Ok(jwt?)
     }
 }

@@ -11,19 +11,28 @@ mod schema;
 mod services;
 mod utils;
 
-use tower_cookies::CookieManagerLayer;
+use std::sync::{Arc, RwLock};
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing::Level;
-use tower_http::trace::{self, TraceLayer};
+use tower_http::{
+    cors::CorsLayer,
+    compression::CompressionLayer,
+    trace::{self, TraceLayer}
+};
+use tower_cookies::CookieManagerLayer;
+use axum::http::{ header::{ ACCEPT, AUTHORIZATION, CONTENT_TYPE }, Method };
+use sqlx::{postgres::Postgres, mysql::MySql, Pool};
+
 use configs::env::{database::posgresql, main::PORT};
-use utils::db::postgres_pool; 
 use models::main::db::ConnPools;
-use sqlx::{Pool, mysql::MySql};
+use utils::db::postgresql_pool; 
+
+type Result<T, E = Box<dyn std::error::Error>> = core::result::Result<T, E>;
 
 
 #[tokio::main]
-async fn main() -> core::result::Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     /* Start Tracing */
     tracing_subscriber::fmt().with_target(false).compact().init();
 
@@ -31,16 +40,20 @@ async fn main() -> core::result::Result<(), Box<dyn std::error::Error>> {
     configs::load_all_env();
 
     /* postgresql */
-    let postgresql 
-        = postgres_pool(&*posgresql::URL, &*posgresql::DB, *posgresql::MAX_CONNECTION)
-            .await?;
+    let postgresql: Arc<RwLock<Pool<Postgres>>> = Arc::new(
+        RwLock::new(
+            postgresql_pool(
+                &*posgresql::URL, &*posgresql::DB, *posgresql::MAX_CONNECTION, *posgresql::TIMEOUT
+            ).await?
+        )
+    );
 
     /* mysql */
-    let mysql: Option<Pool<MySql>>
+    let mysql: Option<Arc<RwLock<Pool<MySql>>>> 
         = None;
 
     /* mariadb */
-    let mariadb: Option<Pool<MySql>>
+    let mariadb: Option<Arc<RwLock<Pool<MySql>>>>
         = None;
 
     let pools = ConnPools::new(
@@ -49,10 +62,20 @@ async fn main() -> core::result::Result<(), Box<dyn std::error::Error>> {
 
     let apis = routers::index(pools)
         .layer(
-            middlewares::cors_layor()
+            CorsLayer::new()
+                .allow_methods([Method::GET, Method::POST, Method::PUT, Method::PATCH, Method::DELETE])
+                .allow_credentials(true)
+                .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE])
         )
         .layer(
             CookieManagerLayer::new()
+        )
+        .layer(
+            CompressionLayer::new()
+                .gzip(true)
+                .br(true)
+                .deflate(true)
+                .zstd(true)
         )
         .layer(
             TraceLayer::new_for_http()
@@ -70,15 +93,11 @@ async fn main() -> core::result::Result<(), Box<dyn std::error::Error>> {
                 )
         );
 
-    let listener = TcpListener::bind(SocketAddr::from(([0, 0, 0, 0], *PORT)))
-        .await
-        .unwrap();
+    let listener = TcpListener::bind(SocketAddr::from(([0, 0, 0, 0], *PORT))).await?;
 
-    tracing::info!("✅ Start APIs Server, listening on port =>> {:#?} 🚀🌟", *PORT);
+    tracing::info!("✅ Start APIs Server, listening on port ->> {:#?} 🚀🌟.", *PORT);
 
-    axum::serve(listener, apis.into_make_service())
-        .await
-        .unwrap();
+    axum::serve(listener, apis.into_make_service()).await?;
 
     Ok(())
 }
