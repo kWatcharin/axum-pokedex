@@ -1,6 +1,8 @@
 #![allow(unused)]
+use std::sync::{Arc, RwLock};
 use axum::{routing::post, response::IntoResponse, Router, Json, extract::State};
 use tower_cookies::{Cookies, Cookie};
+use sqlx::{Pool, postgres::Postgres};
 use crate::models::main::db::ConnPools;
 use crate::errors::{Result, Error};
 
@@ -29,54 +31,52 @@ mod poke_test {
     
 
     async fn list(State(pools): State<ConnPools>) -> Result<impl IntoResponse> {
-        let postgresql_pool = match &pools.postgresql {
-            Some(pool) => pool,
+        match pools.postgresql {
+            Some(pg_pool) => {
+                let pg_pool: Arc<RwLock<Pool<Postgres>>> = Arc::clone(&pg_pool);
+                let pg_pool: Pool<Postgres> = pg_pool.read().unwrap().clone();
+                Ok(
+                    poke_test::list(&pg_pool)
+                        .await?
+                )
+            },
             None => return Err(Error::InternalServerError)
-        };
-
-        Ok(
-            poke_test::list(postgresql_pool)
-                .await?
-        )
+        }
     }
 
 
-    async fn create(pools: State<ConnPools>, payload: Json<CreatePokemonPayload>) -> Result<impl IntoResponse> {
-        let postgresql_pool = match &pools.postgresql {
-            Some(pool) => pool,
+    async fn create(State(pools): State<ConnPools>, payload: Json<CreatePokemonPayload>) -> Result<impl IntoResponse> {
+        match pools.postgresql {
+            Some(pg_pool) => {
+                let pg_pool: Arc<RwLock<Pool<Postgres>>> = Arc::clone(&pg_pool);
+                let pg_pool: Pool<Postgres> = pg_pool.read().unwrap().clone();
+                let body = match payload {
+                    Json(data) => data
+                };
+                Ok(
+                    poke_test::create(&pg_pool, body)
+                        .await?
+                )
+            },
             None => return Err(Error::InternalServerError)
-        };
-
-        let body = CreatePokemonPayload {
-            poke_code: payload.poke_code.to_owned(),
-            poke_name: payload.poke_name.to_owned(),
-            lv: payload.lv.to_owned()
-        };
-
-        let body = match payload {
-            Json(data) => data
-        };
-
-        Ok(
-            poke_test::create(postgresql_pool, body)
-                .await?
-        )
+        }
     }
 
 
-    async fn update(pools: State<ConnPools>, payload: Json<UpdatePokeTestPayload>) -> Result<impl IntoResponse> {
-        let postgresql_pool = match &pools.postgresql {
-            Some(pool) => pool,
+    async fn update(State(pools): State<ConnPools>, payload: Json<UpdatePokeTestPayload>) -> Result<impl IntoResponse> {
+        match pools.postgresql {
+            Some(pg_pool) => {
+                let pg_pool: Arc<RwLock<Pool<Postgres>>> = Arc::clone(&pg_pool);
+                let pg_pool: Pool<Postgres> = pg_pool.read().unwrap().clone();
+                let body = match payload {
+                    Json(data) => data
+                };
+                Ok(
+                    poke_test::update(&pg_pool, body)
+                        .await?
+                )
+            },
             None => return Err(Error::InternalServerError)
-        };
-
-        let body = match payload {
-            Json(data) => data
-        };
-
-        Ok(
-            poke_test::update(postgresql_pool, body)
-                .await?
-        )
+        }
     }
 }

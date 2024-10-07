@@ -73,13 +73,13 @@ impl IntoResponse for Error {
         let error_message;
         let error_response =  match self {
             Error::LoginFailed => {
-                error_message = ErrorMessage { message: "Unauthorized.".to_string() };
+                error_message = ErrorMessage { message: String::from("Unauthorized.") };
                 (
                     StatusCode::UNAUTHORIZED, Json(ErrorResponse { detail: error_message })
                 )
             },
             Error::DatabaseQueryError => {
-                error_message = ErrorMessage { message: "Database query error.".to_string() };
+                error_message = ErrorMessage { message: String::from("Database query error.") };
                 (
                     StatusCode::INTERNAL_SERVER_ERROR, Json(ErrorResponse { detail: error_message })
                 )
