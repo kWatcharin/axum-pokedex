@@ -63,7 +63,6 @@ async fn main() -> Result<()> {
     let apis = routers::index(pools)
         .layer(
             CorsLayer::new()
-                .allow_credentials(true)
                 .allow_methods([Method::GET, Method::POST, Method::PUT, Method::PATCH, Method::DELETE])
                 .allow_credentials(true)
                 .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE])
